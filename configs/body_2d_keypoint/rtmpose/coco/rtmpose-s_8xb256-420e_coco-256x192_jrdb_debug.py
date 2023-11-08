@@ -59,8 +59,8 @@ model = dict(
         type='CSPNeXt',
         arch='P5',
         expand_ratio=0.5,
-        deepen_factor=0.167,
-        widen_factor=0.375,
+        deepen_factor=0.33,
+        widen_factor=0.5,
         out_indices=(4, ),
         channel_attention=True,
         norm_cfg=dict(type='SyncBN'),
@@ -69,11 +69,11 @@ model = dict(
             type='Pretrained',
             prefix='backbone.',
             checkpoint='https://download.openmmlab.com/mmpose/v1/projects/'
-            'rtmposev1/cspnext-tiny_udp-aic-coco_210e-256x192-cbed682d_20230130.pth'  # noqa
+            'rtmposev1/cspnext-s_udp-aic-coco_210e-256x192-92f5a029_20230130.pth'  # noqa
         )),
     head=dict(
         type='RTMCCHead',
-        in_channels=384,
+        in_channels=512,
         out_channels=17,
         input_size=codec['input_size'],
         in_featuremap_size=tuple([s // 32 for s in codec['input_size']]),
@@ -94,21 +94,22 @@ model = dict(
             beta=10.,
             label_softmax=True),
         decoder=codec),
-    test_cfg=dict(flip_test=True, ))
+    test_cfg=dict(flip_test=True))
 
 # base dataset settings
 dataset_type = 'CocoDataset'
 data_mode = 'topdown'
-# data_mode = 'ooooo'
-data_root = 'data/'
-# data_root = "/data/shared/JRDB_2022_debug/train_dataset_with_activity/"
+# data_root = 'data/coco/'
+# data_root = "/media/hao/Seagate Basic/dataset/coco2017_debug/"
+data_root = "/media/hao/Seagate Basic1/dataset/JRDB_2022_debug/train_dataset_with_activity/"
+# data_root = "/data/shared/dataset/JRDB_2022_debug/train_dataset_with_activity/"
 
 backend_args = dict(backend='local')
 # backend_args = dict(
 #     backend='petrel',
 #     path_mapping=dict({
-#         f'{data_root}': 's3://openmmlab/datasets/',
-#         f'{data_root}': 's3://openmmlab/datasets/'
+#         f'{data_root}': 's3://openmmlab/datasets/detection/coco/',
+#         f'{data_root}': 's3://openmmlab/datasets/detection/coco/'
 #     }))
 
 # pipelines
@@ -134,7 +135,7 @@ train_pipeline = [
                 min_holes=1,
                 min_height=0.2,
                 min_width=0.2,
-                p=1.0),
+                p=1.),
         ]),
     dict(type='GenerateTarget', encoder=codec),
     dict(type='PackPoseInputs')
@@ -177,47 +178,6 @@ train_pipeline_stage2 = [
     dict(type='PackPoseInputs')
 ]
 
-# train datasets
-dataset_coco = dict(
-    type='RepeatDataset',
-    dataset=dict(
-        type=dataset_type,
-        data_root=data_root,
-        data_mode=data_mode,
-        ann_file='coco/annotations/person_keypoints_train2017.json',
-        data_prefix=dict(img='detection/coco/train2017/'),
-        pipeline=[],
-    ),
-    times=3)
-
-dataset_aic = dict(
-    type='AicDataset',
-    data_root=data_root,
-    data_mode=data_mode,
-    ann_file='aic/annotations/aic_train.json',
-    data_prefix=dict(img='pose/ai_challenge/ai_challenger_keypoint'
-                     '_train_20170902/keypoint_train_images_20170902/'),
-    pipeline=[
-        dict(
-            type='KeypointConverter',
-            num_keypoints=17,
-            mapping=[
-                (0, 6),
-                (1, 8),
-                (2, 10),
-                (3, 5),
-                (4, 7),
-                (5, 9),
-                (6, 12),
-                (7, 14),
-                (8, 16),
-                (9, 11),
-                (10, 13),
-                (11, 15),
-            ])
-    ],
-)
-
 # data loaders
 train_dataloader = dict(
     batch_size=256,
@@ -225,11 +185,15 @@ train_dataloader = dict(
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=True),
     dataset=dict(
-        type='CombinedDataset',
-        metainfo=dict(from_file='configs/_base_/datasets/coco.py'),
-        datasets=[dataset_coco, dataset_aic],
+        type=dataset_type,
+        data_root=data_root,
+        data_mode=data_mode,
+        # ann_file='annotations/person_keypoints_train2017.json',
+        # ann_file='labels/labels_2d_pose_coco/bytes-cafe-2019-02-07_0_image0.json',
+        ann_file='labels/jrdb_mmpose_train/train_individual_formatted_debug.json',
+        # data_prefix=dict(img='train2017/'),
+        data_prefix=dict(img='images'),
         pipeline=train_pipeline,
-        test_mode=False,
     ))
 val_dataloader = dict(
     batch_size=64,
@@ -241,10 +205,14 @@ val_dataloader = dict(
         type=dataset_type,
         data_root=data_root,
         data_mode=data_mode,
-        ann_file='coco/annotations/person_keypoints_val2017.json',
-        # bbox_file='data/coco/person_detection_results/'
+        # ann_file='annotations/person_keypoints_val2017.json',
+        # ann_file='labels/labels_2d_pose_coco/bytes-cafe-2019-02-07_0_image0.json',
+        ann_file='labels/jrdb_mmpose_train/val_individual_formatted_debug.json',
+        # bbox_file=f'{data_root}person_detection_results/'
         # 'COCO_val2017_detections_AP_H_56_person.json',
-        data_prefix=dict(img='detection/coco/val2017/'),
+        # data_prefix=dict(img='val2017/'),
+        # data_prefix=dict(img='images/image_0/bytes-cafe-2019-02-07_0/'),
+        data_prefix=dict(img='images'),
         test_mode=True,
         pipeline=val_pipeline,
     ))
@@ -255,13 +223,12 @@ default_hooks = dict(
     checkpoint=dict(save_best='coco/AP', rule='greater', max_keep_ckpts=1))
 
 custom_hooks = [
-    # Turn off EMA while training the tiny model
-    # dict(
-    #     type='EMAHook',
-    #     ema_type='ExpMomentumEMA',
-    #     momentum=0.0002,
-    #     update_buffers=True,
-    #     priority=49),
+    dict(
+        type='EMAHook',
+        ema_type='ExpMomentumEMA',
+        momentum=0.0002,
+        update_buffers=True,
+        priority=49),
     dict(
         type='mmdet.PipelineSwitchHook',
         switch_epoch=max_epochs - stage2_num_epochs,
@@ -271,5 +238,8 @@ custom_hooks = [
 # evaluators
 val_evaluator = dict(
     type='CocoMetric',
-    ann_file=data_root + 'coco/annotations/person_keypoints_val2017.json')
+    # ann_file=data_root + 'annotations/person_keypoints_val2017.json')
+    # ann_file= data_root + 'annotations/person_keypoints_val2017.json')
+    # ann_file= data_root + 'labels/labels_2d_pose_coco/bytes-cafe-2019-02-07_0_image0.json')
+    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug.json')
 test_evaluator = val_evaluator

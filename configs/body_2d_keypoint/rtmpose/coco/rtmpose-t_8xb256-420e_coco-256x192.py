@@ -99,7 +99,11 @@ model = dict(
 # base dataset settings
 dataset_type = 'CocoDataset'
 data_mode = 'topdown'
-data_root = 'data/coco/'
+# data_root = 'data/coco/'
+data_root = "/media/hao/Seagate Basic/dataset/coco2017"
+# data_root = "/data/shared/JRDB_2022/train_dataset_with_activity/"
+
+
 
 backend_args = dict(backend='local')
 # backend_args = dict(
