@@ -106,7 +106,7 @@ model = dict(
 dataset_type = 'CocoDataset'
 data_mode = 'topdown'
 # data_root = 'data/coco/'
-data_root = "/media/hao/Seagate Basic1/dataset/coco2017/"
+data_root = "/media/hao/Seagate Basic1/dataset/coco2017_debug/"
 
 
 backend_args = dict(backend='local')

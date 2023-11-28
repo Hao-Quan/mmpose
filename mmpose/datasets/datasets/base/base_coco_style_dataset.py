@@ -16,6 +16,7 @@ from mmpose.registry import DATASETS
 from mmpose.structures.bbox import bbox_xywh2xyxy
 from ..utils import parse_pose_metainfo
 
+import cv2
 
 @DATASETS.register_module()
 class BaseCocoStyleDataset(BaseDataset):
@@ -228,11 +229,12 @@ class BaseCocoStyleDataset(BaseDataset):
 
         instance_list = []
         image_list = []
-
+        # for each image id, update info
         for img_id in self.coco.getImgIds():
             if img_id % self.sample_interval != 0:
                 continue
             img = self.coco.loadImgs(img_id)[0]
+            # add two info
             img.update({
                 'img_id':
                 img_id,
@@ -240,16 +242,32 @@ class BaseCocoStyleDataset(BaseDataset):
                 osp.join(self.data_prefix['img'], img['file_name']),
             })
             image_list.append(img)
-
+            # for each image id, search its annotation ids
             ann_ids = self.coco.getAnnIds(imgIds=img_id)
+            # for each annotation/person of that specific image id
             for ann in self.coco.loadAnns(ann_ids):
-
                 instance_info = self.parse_data_info(
                     dict(raw_ann_info=ann, raw_img_info=img))
 
                 # skip invalid instance annotation.
                 if not instance_info:
                     continue
+
+                # TODO: comment it when running
+                '''Visualizzation of bbox and keypoints for debugging purposes, please comment it when RUN'''
+                # img_debug = cv2.imread(instance_info["img_path"])
+                # x1 = instance_info['bbox'][0][0]
+                # y1 = instance_info['bbox'][0][1]
+                # x2 = instance_info['bbox'][0][2]
+                # y2 = instance_info['bbox'][0][3]
+                # img_debug = cv2.rectangle(img_debug, (int(x1), int(y1)), (int(x2), int(y2)), color=(255, 0, 0), thickness=2)
+                #
+                # for i  in range(17):
+                #     image_debug = cv2.circle(img_debug, (int(instance_info["keypoints"][0][i][0]), int(instance_info["keypoints"][0][i][1])), radius=2, color=(0, 0, 255), thickness=2)
+                # cv2.imshow("res", img_debug)
+                # cv2.waitKey(0)
+                # cv2.destroyAllWindows()
+                '''End debug plotting'''
 
                 instance_list.append(instance_info)
         return instance_list, image_list
