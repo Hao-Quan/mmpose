@@ -443,6 +443,9 @@ class CocoMetric(BaseMetric):
             num_keypoints = self.pred_converter['num_keypoints']
         else:
             num_keypoints = self.dataset_meta['num_keypoints']
+            #TODO: cablato num_keypoints = 14
+            # num_keypoints = 14
+
         for img_id, instances in kpts.items():
             for instance in instances:
                 # concatenate the keypoint coordinates and scores

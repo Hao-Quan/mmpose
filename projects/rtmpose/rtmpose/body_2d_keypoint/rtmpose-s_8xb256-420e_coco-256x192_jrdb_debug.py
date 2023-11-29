@@ -211,8 +211,12 @@ val_dataloader = dict(
         data_root=data_root,
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_val2017.json',
-        # ann_file='labels/jrdb_mmpose_train/val_individual_formatted_debug.json',
-        ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug.json',
+        # ann_file='labels/jrdb_mmpose_train/val_individual_formatted_debug_GT_equal_prediction.json',
+        # ann_file='labels/jrdb_mmpose_train/val_individual_formatted_debug_true_GT.json',
+        # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug.json',
+
+        ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
+
         # bbox_file=f'{data_root}person_detection_results/'
         # 'COCO_val2017_detections_AP_H_56_person.json',
         # data_prefix=dict(img='val2017/'),
@@ -243,5 +247,10 @@ custom_hooks = [
 val_evaluator = dict(
     type='CocoMetric',
     # ann_file=data_root + 'annotations/person_keypoints_val2017.json')
-    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug_GT_equal_prediction.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug_true_GT.json')
+
+    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
+
 test_evaluator = val_evaluator
