@@ -2,15 +2,12 @@ _base_ = ['mmpose::_base_/default_runtime.py']
 
 # common setting
 num_keypoints = 17
-input_size = (192, 256)
+input_size = (288, 384)
 
 # runtime
-max_epochs = 420
-stage2_num_epochs = 30
+max_epochs = 700
+stage2_num_epochs = 20
 base_lr = 4e-3
-# train_batch_size = 256
-# val_batch_size = 64
-
 train_batch_size = 256
 val_batch_size = 64
 
@@ -20,7 +17,7 @@ randomness = dict(seed=21)
 # optimizer
 optim_wrapper = dict(
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=base_lr, weight_decay=0.),
+    optimizer=dict(type='AdamW', lr=base_lr, weight_decay=0.05),
     clip_grad=dict(max_norm=35, norm_type=2),
     paramwise_cfg=dict(
         norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True))
@@ -50,7 +47,7 @@ auto_scale_lr = dict(base_batch_size=1024)
 codec = dict(
     type='SimCCLabel',
     input_size=input_size,
-    sigma=(4.9, 5.66),
+    sigma=(6., 6.93),
     simcc_split_ratio=2.0,
     normalize=False,
     use_dark=False)
@@ -68,8 +65,8 @@ model = dict(
         type='CSPNeXt',
         arch='P5',
         expand_ratio=0.5,
-        deepen_factor=0.33,
-        widen_factor=0.5,
+        deepen_factor=1.33,
+        widen_factor=1.25,
         out_indices=(4, ),
         channel_attention=True,
         norm_cfg=dict(type='SyncBN'),
@@ -78,11 +75,11 @@ model = dict(
             type='Pretrained',
             prefix='backbone.',
             checkpoint='https://download.openmmlab.com/mmpose/v1/projects/'
-            'rtmposev1/cspnext-s_udp-aic-coco_210e-256x192-92f5a029_20230130.pth'  # noqa
+            'rtmposev1/cspnext-x_udp-body7_210e-384x288-d28b58e6_20230529.pth'  # noqa
         )),
     head=dict(
         type='RTMCCHead',
-        in_channels=512,
+        in_channels=1280,
         out_channels=num_keypoints,
         input_size=codec['input_size'],
         in_featuremap_size=tuple([s // 32 for s in codec['input_size']]),
@@ -109,12 +106,6 @@ model = dict(
 dataset_type = 'CocoDataset'
 data_mode = 'topdown'
 # data_root = 'data/coco/'
-# data_root = "/media/hao/Seagate Basic1/dataset/coco2017/"
-
-# local
-# data_root = "/media/hao/Seagate Basic1/dataset/JRDB_2022_debug/train_dataset_with_activity/"
-
-# remote
 data_root = "/data/JRDB_2022/train_dataset_with_activity/"
 
 backend_args = dict(backend='local')
@@ -132,9 +123,9 @@ train_pipeline = [
     dict(type='RandomFlip', direction='horizontal'),
     dict(type='RandomHalfBody'),
     dict(
-        type='RandomBBoxTransform', scale_factor=[0.6, 1.4], rotate_factor=80),
+        type='RandomBBoxTransform', scale_factor=[0.5, 1.5], rotate_factor=90),
     dict(type='TopdownAffine', input_size=codec['input_size']),
-    dict(type='mmdet.YOLOXHSVRandomAug'),
+    dict(type='PhotometricDistortion'),
     dict(
         type='Albumentation',
         transforms=[
@@ -168,8 +159,8 @@ train_pipeline_stage2 = [
     dict(
         type='RandomBBoxTransform',
         shift_factor=0.,
-        scale_factor=[0.75, 1.25],
-        rotate_factor=60),
+        scale_factor=[0.5, 1.5],
+        rotate_factor=90),
     dict(type='TopdownAffine', input_size=codec['input_size']),
     dict(type='mmdet.YOLOXHSVRandomAug'),
     dict(
@@ -202,7 +193,7 @@ train_dataloader = dict(
         data_root=data_root,
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_train2017.json',
-        ann_file='labels/jrdb_mmpose_train/train_individual.json',
+        ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
         # data_prefix=dict(img='train2017/'),
         data_prefix=dict(img='images'),
         pipeline=train_pipeline,
@@ -219,7 +210,6 @@ val_dataloader = dict(
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_val2017.json',
         ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
-        # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
         # bbox_file=f'{data_root}person_detection_results/'
         # 'COCO_val2017_detections_AP_H_56_person.json',
         # data_prefix=dict(img='val2017/'),
@@ -251,7 +241,4 @@ val_evaluator = dict(
     type='CocoMetric',
     # ann_file=data_root + 'annotations/person_keypoints_val2017.json')
     ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
-    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
-
-
 test_evaluator = val_evaluator

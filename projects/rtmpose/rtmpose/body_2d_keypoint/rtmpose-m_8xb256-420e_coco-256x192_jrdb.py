@@ -8,9 +8,6 @@ input_size = (192, 256)
 max_epochs = 420
 stage2_num_epochs = 30
 base_lr = 4e-3
-# train_batch_size = 256
-# val_batch_size = 64
-
 train_batch_size = 256
 val_batch_size = 64
 
@@ -20,7 +17,7 @@ randomness = dict(seed=21)
 # optimizer
 optim_wrapper = dict(
     type='OptimWrapper',
-    optimizer=dict(type='AdamW', lr=base_lr, weight_decay=0.),
+    optimizer=dict(type='AdamW', lr=base_lr, weight_decay=0.05),
     clip_grad=dict(max_norm=35, norm_type=2),
     paramwise_cfg=dict(
         norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True))
@@ -68,8 +65,8 @@ model = dict(
         type='CSPNeXt',
         arch='P5',
         expand_ratio=0.5,
-        deepen_factor=0.33,
-        widen_factor=0.5,
+        deepen_factor=0.67,
+        widen_factor=0.75,
         out_indices=(4, ),
         channel_attention=True,
         norm_cfg=dict(type='SyncBN'),
@@ -78,11 +75,11 @@ model = dict(
             type='Pretrained',
             prefix='backbone.',
             checkpoint='https://download.openmmlab.com/mmpose/v1/projects/'
-            'rtmposev1/cspnext-s_udp-aic-coco_210e-256x192-92f5a029_20230130.pth'  # noqa
+            'rtmposev1/cspnext-m_udp-aic-coco_210e-256x192-f2f7d6f6_20230130.pth'  # noqa
         )),
     head=dict(
         type='RTMCCHead',
-        in_channels=512,
+        in_channels=768,
         out_channels=num_keypoints,
         input_size=codec['input_size'],
         in_featuremap_size=tuple([s // 32 for s in codec['input_size']]),
@@ -109,21 +106,12 @@ model = dict(
 dataset_type = 'CocoDataset'
 data_mode = 'topdown'
 # data_root = 'data/coco/'
-# data_root = "/media/hao/Seagate Basic1/dataset/coco2017/"
 
-# local
-# data_root = "/media/hao/Seagate Basic1/dataset/JRDB_2022_debug/train_dataset_with_activity/"
+# data_root = "/data/JRDB_2022/train_dataset_with_activity/"
 
-# remote
-data_root = "/data/JRDB_2022/train_dataset_with_activity/"
+data_root = "/media/hao/Seagate Basic1/dataset/JRDB_2022_debug/train_dataset_with_activity/"
 
 backend_args = dict(backend='local')
-# backend_args = dict(
-#     backend='petrel',
-#     path_mapping=dict({
-#         f'{data_root}': 's3://openmmlab/datasets/detection/coco/',
-#         f'{data_root}': 's3://openmmlab/datasets/detection/coco/'
-#     }))
 
 # pipelines
 train_pipeline = [
@@ -219,7 +207,6 @@ val_dataloader = dict(
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_val2017.json',
         ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
-        # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
         # bbox_file=f'{data_root}person_detection_results/'
         # 'COCO_val2017_detections_AP_H_56_person.json',
         # data_prefix=dict(img='val2017/'),
@@ -251,7 +238,4 @@ val_evaluator = dict(
     type='CocoMetric',
     # ann_file=data_root + 'annotations/person_keypoints_val2017.json')
     ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
-    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
-
-
 test_evaluator = val_evaluator
