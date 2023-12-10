@@ -202,7 +202,7 @@ train_dataloader = dict(
         data_root=data_root,
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_train2017.json',
-        ann_file='labels/jrdb_mmpose_train/train_individual.json',
+        ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
         # data_prefix=dict(img='train2017/'),
         data_prefix=dict(img='images'),
         pipeline=train_pipeline,

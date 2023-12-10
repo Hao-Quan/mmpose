@@ -254,16 +254,24 @@ class BaseCocoStyleDataset(BaseDataset):
                     continue
 
                 # TODO: comment it when running
-                '''Visualizzation of bbox and keypoints for debugging purposes, please comment it when RUN'''
+                '''Visualizzation TRAIN or VAL as GT set (depending on config file) of bbox and keypoints for debugging purposes, please comment it when RUN'''
                 # img_debug = cv2.imread(instance_info["img_path"])
+                # thickness = 2
+                # fontScale = 0.4
+                # font = cv2.FONT_HERSHEY_SIMPLEX
+                # # GREEN for GT
+                # fontcolor = (0, 255, 0)
                 # x1 = instance_info['bbox'][0][0]
                 # y1 = instance_info['bbox'][0][1]
                 # x2 = instance_info['bbox'][0][2]
                 # y2 = instance_info['bbox'][0][3]
-                # img_debug = cv2.rectangle(img_debug, (int(x1), int(y1)), (int(x2), int(y2)), color=(255, 0, 0), thickness=2)
+                # img_debug = cv2.rectangle(img_debug, (int(x1), int(y1)), (int(x2), int(y2)), color=(255, 0, 0), thickness=thickness)
                 #
                 # for i  in range(17):
-                #     image_debug = cv2.circle(img_debug, (int(instance_info["keypoints"][0][i][0]), int(instance_info["keypoints"][0][i][1])), radius=2, color=(0, 0, 255), thickness=2)
+                #     org = (int(instance_info["keypoints"][0][i][0]) + 10,
+                #            int(instance_info["keypoints"][0][i][1]))
+                #     cv2.circle(img_debug, (int(instance_info["keypoints"][0][i][0]), int(instance_info["keypoints"][0][i][1])), radius=2, color=(0, 255, 0), thickness=2)
+                #     cv2.putText(img_debug, str(i + 1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
                 # cv2.imshow("res", img_debug)
                 # cv2.waitKey(0)
                 # cv2.destroyAllWindows()
