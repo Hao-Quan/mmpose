@@ -255,7 +255,11 @@ custom_hooks = [
 # evaluators
 val_evaluator = dict(
     type='CocoMetric',
+    # original COCO 17 joints
     ann_file=data_root + 'annotations/person_keypoints_val2017.json')
+
+    # remapping COCO 14 joints
+
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug_GT_equal_prediction.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug_true_GT.json')

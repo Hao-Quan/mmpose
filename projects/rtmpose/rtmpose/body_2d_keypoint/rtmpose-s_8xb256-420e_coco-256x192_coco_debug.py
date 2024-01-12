@@ -8,9 +8,6 @@ input_size = (192, 256)
 max_epochs = 420
 stage2_num_epochs = 30
 base_lr = 4e-3
-# train_batch_size = 256
-# val_batch_size = 64
-
 train_batch_size = 256
 val_batch_size = 64
 
@@ -109,13 +106,12 @@ model = dict(
 dataset_type = 'CocoDataset'
 data_mode = 'topdown'
 # data_root = 'data/coco/'
-# data_root = "/media/hao/Seagate Basic1/dataset/coco2017/"
 
-# local
+# data_root = "/data/coco2017/"
+
+data_root = "/media/hao/Seagate Basic1/dataset/coco2017_debug/"
 # data_root = "/media/hao/Seagate Basic1/dataset/JRDB_2022_debug/train_dataset_with_activity/"
-
-# remote
-data_root = "/data/JRDB_2022/train_dataset_with_activity/"
+# data_root = "/data/JRDB_2022/train_dataset_with_activity/"
 
 backend_args = dict(backend='local')
 # backend_args = dict(
@@ -201,10 +197,14 @@ train_dataloader = dict(
         type=dataset_type,
         data_root=data_root,
         data_mode=data_mode,
-        # ann_file='annotations/person_keypoints_train2017.json',
-        ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
-        # data_prefix=dict(img='train2017/'),
-        data_prefix=dict(img='images'),
+        ann_file='annotations/person_keypoints_train2017.json',
+        # ann_file='labels/jrdb_mmpose_train/train_individual_formatted_debug.json',
+
+        # TO BE REMOVED
+        # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
+
+        data_prefix=dict(img='train2017/'),
+        # data_prefix=dict(img='images'),
         pipeline=train_pipeline,
     ))
 val_dataloader = dict(
@@ -217,14 +217,19 @@ val_dataloader = dict(
         type=dataset_type,
         data_root=data_root,
         data_mode=data_mode,
-        # ann_file='annotations/person_keypoints_val2017.json',
-        ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
-        # ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
+        ann_file='annotations/person_keypoints_val2017.json',
+        # ann_file='labels/jrdb_mmpose_train/val_individual_formatted_debug_GT_equal_prediction.json',
+        # ann_file='labels/jrdb_mmpose_train/val_individual_formatted_debug_true_GT.json',
+        # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug.json',
+
+        # OK
         # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
+        # ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
+
         # bbox_file=f'{data_root}person_detection_results/'
         # 'COCO_val2017_detections_AP_H_56_person.json',
-        # data_prefix=dict(img='val2017/'),
-        data_prefix=dict(img='images'),
+        data_prefix=dict(img='val2017/'),
+        # data_prefix=dict(img='images'),
         test_mode=True,
         pipeline=val_pipeline,
     ))
@@ -250,10 +255,18 @@ custom_hooks = [
 # evaluators
 val_evaluator = dict(
     type='CocoMetric',
-    # ann_file=data_root + 'annotations/person_keypoints_val2017.json')
-    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
-    # ann_file= data_root + 'labels/jrdb_mmpose_train/train_individual_COCO.json')
+    # original COCO 17 joints
+    ann_file=data_root + 'annotations/person_keypoints_val2017.json')
+
+    # remapping COCO 14 joints
+
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug_GT_equal_prediction.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug_true_GT.json')
+
+    # OK pass debug
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
 
 
 test_evaluator = val_evaluator

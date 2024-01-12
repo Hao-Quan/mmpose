@@ -215,6 +215,15 @@ class CocoMetric(BaseMetric):
             pred['id'] = data_sample['id']
             pred['img_id'] = data_sample['img_id']
 
+            '''Hao: Hand crafted last 3 keypoints (x, y) == 1 GT (in batch data)'''
+            # keypoints[0][14] = np.array([1, 1])
+            # keypoints[0][15] = np.array([1, 1])
+            # keypoints[0][16] = np.array([1, 1])
+            #
+            # keypoint_scores[0][14] = np.array(1)
+            # keypoint_scores[0][15] = np.array(1)
+            # keypoint_scores[0][16] = np.array(1)
+
             pred['keypoints'] = keypoints
             pred['keypoint_scores'] = keypoint_scores
             pred['category_id'] = data_sample.get('category_id', 1)
@@ -486,6 +495,17 @@ class CocoMetric(BaseMetric):
                     self.nms_thr,
                     sigmas=self.dataset_meta['sigmas'])
                 valid_kpts[img_id] = [instances[_keep] for _keep in keep]
+
+        # handcrafted the last 3 keypoints coordinates == GT
+        # for a_idx, pred_item_list in valid_kpts.items():
+        #     for b_idx, pred_item in enumerate(pred_item_list):
+        #         pred_item["keypoints"][14] = np.array([1, 1, 1])
+        #         pred_item["keypoints"][15] = np.array([1, 1, 1])
+        #         pred_item["keypoints"][16] = np.array([1, 1, 1])
+        #
+        #         pred_item["keypoint_scores"][14] = np.array(1)
+        #         pred_item["keypoint_scores"][15] = np.array(1)
+        #         pred_item["keypoint_scores"][16] = np.array(1)
 
         # convert results to coco style and dump into a json file
         self.results2json(valid_kpts, outfile_prefix=outfile_prefix)

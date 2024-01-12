@@ -198,7 +198,7 @@ train_dataloader = dict(
         # ann_file='labels/jrdb_mmpose_train/train_individual_formatted_debug.json',
 
         # TO BE REMOVED
-        ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
+        ann_file='labels/jrdb_mmpose_train/train_individual_COCO_debug.json',
 
         # data_prefix=dict(img='train2017/'),
         data_prefix=dict(img='images'),
@@ -220,7 +220,8 @@ val_dataloader = dict(
         # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug.json',
 
         # OK
-        ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
+        ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug.json',
+        # ann_file='labels/jrdb_mmpose_train/train_individual_COCO_debug.json',
         # ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
 
         # bbox_file=f'{data_root}person_detection_results/'
@@ -258,7 +259,8 @@ val_evaluator = dict(
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug_true_GT.json')
 
     # OK pass debug
-    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
+    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/train_individual_COCO_debug.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
 
 

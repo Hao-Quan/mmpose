@@ -52,76 +52,67 @@ class Evaluator:
             data_batch (Any, optional): A batch of data from the dataloader.
         """
 
-        '''re-elaborate prediction joints according to the definition of new version of annotation 17 -> 14 joints'''
-        # color = (0, 255, 0)
-        # markerType = cv2.MARKER_DIAMOND
-        # markerSize = 15
-        # thickness = 2
+        '''plot for debugging purpose'''
+        color = (0, 255, 0)
+        markerType = cv2.MARKER_DIAMOND
+        markerSize = 15
+        thickness = 2
 
-        # for data_sample in data_samples:
-        #     img_debug = cv2.imread(data_sample.img_path)
-        #
-        #     # remove 1 head
-        #     data_sample.pred_instances.keypoints = np.delete(data_sample.pred_instances.keypoints, 0, axis=1)
-        #     data_sample.pred_instances.keypoint_scores = np.delete(data_sample.pred_instances.keypoint_scores, 0, axis=1)
-        #     # remove 4 right ear
-        #     data_sample.pred_instances.keypoints = np.delete(data_sample.pred_instances.keypoints, 2, axis=1)
-        #     data_sample.pred_instances.keypoint_scores = np.delete(data_sample.pred_instances.keypoint_scores, 2,
-        #                                                            axis=1)
-        #     # remove 5 right ear
-        #     data_sample.pred_instances.keypoints = np.delete(data_sample.pred_instances.keypoints, 2, axis=1)
-        #     data_sample.pred_instances.keypoint_scores = np.delete(data_sample.pred_instances.keypoint_scores, 2,
-        #                                                            axis=1)
-        #
-        #     # add 3 dump joints
-        #     data_sample.pred_instances.keypoints = np.concatenate((data_sample.pred_instances.keypoints, np.array([[[0, 0]]])), axis=1)
-        #     data_sample.pred_instances.keypoints = np.concatenate(
-        #         (data_sample.pred_instances.keypoints, np.array([[[0, 0]]])), axis=1)
-        #     data_sample.pred_instances.keypoints = np.concatenate(
-        #         (data_sample.pred_instances.keypoints, np.array([[[0, 0]]])), axis=1)
-        #     # add 3 dump joints' scores
-        #     # data_sample.pred_instances.keypoint_scores = np.concatenate(
-        #     #     (data_sample.pred_instances.keypoint_scores, np.array([[0]])), axis=1)
-        #     # data_sample.pred_instances.keypoint_scores = np.concatenate(
-        #     #     (data_sample.pred_instances.keypoint_scores, np.array([[0]])), axis=1)
-        #     # data_sample.pred_instances.keypoint_scores = np.concatenate(
-        #     #     (data_sample.pred_instances.keypoint_scores, np.array([[0]])), axis=1)
-        #
-        #     data_sample.pred_instances.keypoint_scores = np.concatenate(
-        #         (data_sample.pred_instances.keypoint_scores, np.array([[1]])), axis=1)
-        #     data_sample.pred_instances.keypoint_scores = np.concatenate(
-        #         (data_sample.pred_instances.keypoint_scores, np.array([[1]])), axis=1)
-        #     data_sample.pred_instances.keypoint_scores = np.concatenate(
-        #         (data_sample.pred_instances.keypoint_scores, np.array([[1]])), axis=1)
+        for data_sample in data_samples:
+            img_debug = cv2.imread(data_sample.img_path)
 
-        #     '''start plotting for debugging purpose'''
-        #     # TODO: comment it when run
-        #
-        #     for i in range(17):
-        #     # for i in range(14):
-        #         cv2.circle(img_debug, (int(data_sample.pred_instances.keypoints[0][i][0]), int(data_sample.pred_instances.keypoints[0][i][1])), radius=2, color=(0, 0, 255), thickness=2)
-        #         font = cv2.FONT_HERSHEY_SIMPLEX
-        #         org = (int(data_sample.pred_instances.keypoints[0][i][0]) + 70, int(data_sample.pred_instances.keypoints[0][i][1]))
-        #         fontScale = 0.4
-        #         # RED number for PREDICTION
-        #         fontcolor = (0, 0, 255)
-        #         cv2.putText(img_debug, str(i+1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
-        #
-        #     # plot orig JRDB annotations
-        #
-        #     for i in range(17):
-        #         cv2.drawMarker(img_debug, (int(data_sample.raw_ann_info["keypoints"][i*3]),
-        #                                              int(data_sample.raw_ann_info["keypoints"][i*3+1])), color, markerType, markerSize, thickness)
-        #         font = cv2.FONT_HERSHEY_SIMPLEX
-        #         org = (int(data_sample.raw_ann_info["keypoints"][i*3]) - 70, int(data_sample.raw_ann_info["keypoints"][i*3+1]))
-        #         fontScale = 0.4
-        #         # GREE N number for Ground Truth annotation
-        #         fontcolor = (0, 255, 0)
-        #         cv2.putText(img_debug, str(i+1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
-        #
-        #     cv2.imshow("res", img_debug)
-        #     cv2.waitKey(0)
-        #     cv2.destroyAllWindows()
+            # remove 1 head
+            data_sample.pred_instances.keypoints = np.delete(data_sample.pred_instances.keypoints, 0, axis=1)
+            data_sample.pred_instances.keypoint_scores = np.delete(data_sample.pred_instances.keypoint_scores, 0, axis=1)
+            # remove 4 right ear
+            data_sample.pred_instances.keypoints = np.delete(data_sample.pred_instances.keypoints, 2, axis=1)
+            data_sample.pred_instances.keypoint_scores = np.delete(data_sample.pred_instances.keypoint_scores, 2,
+                                                                   axis=1)
+            # remove 5 right ear
+            data_sample.pred_instances.keypoints = np.delete(data_sample.pred_instances.keypoints, 2, axis=1)
+            data_sample.pred_instances.keypoint_scores = np.delete(data_sample.pred_instances.keypoint_scores, 2,
+                                                                   axis=1)
+            
+            # add 3 dump joints
+            data_sample.pred_instances.keypoints = np.concatenate((data_sample.pred_instances.keypoints, np.array([[[0, 0]]])), axis=1)
+            data_sample.pred_instances.keypoints = np.concatenate(
+                (data_sample.pred_instances.keypoints, np.array([[[0, 0]]])), axis=1)
+            data_sample.pred_instances.keypoints = np.concatenate(
+                (data_sample.pred_instances.keypoints, np.array([[[0, 0]]])), axis=1)
+            # add 3 dump joints' scores
+            data_sample.pred_instances.keypoint_scores = np.concatenate(
+                (data_sample.pred_instances.keypoint_scores, np.array([[0]])), axis=1)
+            data_sample.pred_instances.keypoint_scores = np.concatenate(
+                (data_sample.pred_instances.keypoint_scores, np.array([[0]])), axis=1)
+            data_sample.pred_instances.keypoint_scores = np.concatenate(
+                (data_sample.pred_instances.keypoint_scores, np.array([[0]])), axis=1)
+
+            '''start plotting for debugging purpose'''
+            # for i in range(17):
+            # # for i in range(14):
+            #     cv2.circle(img_debug, (int(data_sample.pred_instances.keypoints[0][i][0]), int(data_sample.pred_instances.keypoints[0][i][1])), radius=2, color=(0, 0, 255), thickness=2)
+            #     font = cv2.FONT_HERSHEY_SIMPLEX
+            #     org = (int(data_sample.pred_instances.keypoints[0][i][0]) + 70, int(data_sample.pred_instances.keypoints[0][i][1]))
+            #     fontScale = 0.4
+            #     # RED number
+            #     fontcolor = (0, 0, 255)
+            #     cv2.putText(img_debug, str(i+1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
+            #
+            # # plot orig JRDB annotations
+            # # for i in range(17):
+            # for i in range(17):
+            #     cv2.drawMarker(img_debug, (int(data_sample.raw_ann_info["keypoints"][i*3]),
+            #                                          int(data_sample.raw_ann_info["keypoints"][i*3+1])), color, markerType, markerSize, thickness)
+            #     font = cv2.FONT_HERSHEY_SIMPLEX
+            #     org = (int(data_sample.raw_ann_info["keypoints"][i*3]) - 70, int(data_sample.raw_ann_info["keypoints"][i*3+1]))
+            #     fontScale = 0.4
+            #     # GREEN number
+            #     fontcolor = (0, 255, 0)
+            #     cv2.putText(img_debug, str(i+1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
+            #
+            # cv2.imshow("res", img_debug)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
         
         '''end plotting for debugging purpose'''
                 
