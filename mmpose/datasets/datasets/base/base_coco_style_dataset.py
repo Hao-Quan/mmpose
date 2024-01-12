@@ -254,7 +254,7 @@ class BaseCocoStyleDataset(BaseDataset):
                     continue
 
                 # TODO: comment it when running
-                '''Visualizzation TRAIN or VAL as GT set (depending on config file) of bbox and keypoints for debugging purposes, please comment it when RUN'''
+                # '''Visualizzation TRAIN or VAL as GROUND TRUTH annotations  (depending on config file) of bbox and keypoints for debugging purposes, please comment it when RUN'''
                 # img_debug = cv2.imread(instance_info["img_path"])
                 # thickness = 2
                 # fontScale = 0.4
@@ -275,7 +275,7 @@ class BaseCocoStyleDataset(BaseDataset):
                 # cv2.imshow("res", img_debug)
                 # cv2.waitKey(0)
                 # cv2.destroyAllWindows()
-                '''End debug plotting'''
+                # '''End debug plotting'''
 
                 instance_list.append(instance_info)
         return instance_list, image_list

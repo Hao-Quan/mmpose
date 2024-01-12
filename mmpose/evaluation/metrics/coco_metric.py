@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import datetime
+import os.path
 import os.path as osp
 import tempfile
 from collections import OrderedDict, defaultdict
@@ -16,7 +17,7 @@ from mmpose.registry import METRICS
 from mmpose.structures.bbox import bbox_xyxy2xywh
 from ..functional import (oks_nms, soft_oks_nms, transform_ann, transform_pred,
                           transform_sigmas)
-
+import cv2
 
 @METRICS.register_module()
 class CocoMetric(BaseMetric):
@@ -452,8 +453,6 @@ class CocoMetric(BaseMetric):
             num_keypoints = self.pred_converter['num_keypoints']
         else:
             num_keypoints = self.dataset_meta['num_keypoints']
-            #TODO: cablato num_keypoints = 14
-            # num_keypoints = 14
 
         for img_id, instances in kpts.items():
             for instance in instances:
@@ -496,7 +495,7 @@ class CocoMetric(BaseMetric):
                     sigmas=self.dataset_meta['sigmas'])
                 valid_kpts[img_id] = [instances[_keep] for _keep in keep]
 
-        # handcrafted the last 3 keypoints coordinates == GT
+        ''' At the final phases - handcrafted the last 3 keypoints coordinates == GT '''
         # for a_idx, pred_item_list in valid_kpts.items():
         #     for b_idx, pred_item in enumerate(pred_item_list):
         #         pred_item["keypoints"][14] = np.array([1, 1, 1])
@@ -602,6 +601,50 @@ class CocoMetric(BaseMetric):
             ]
 
         info_str = list(zip(stats_names, coco_eval.stats))
+
+        ''' Start: Plot for visualizzation for comparision between GT and predicted results '''
+        a = 1
+        markerType = cv2.MARKER_DIAMOND
+        markerSize = 15
+        thickness = 2
+        for ikey, inested_dict in coco_eval.cocoGt.imgs.items():
+            if isinstance(inested_dict, dict):
+                img = cv2.imread(os.path.join("/media/hao/Seagate Basic1/dataset/JRDB_2022_debug/train_dataset_with_activity/images", inested_dict["file_name"]))
+                current_img_id = inested_dict["id"]
+                for ann_key, ann_nested_dict in coco_eval.cocoGt.anns.items():
+                    if isinstance(ann_nested_dict, dict):
+                        if ann_nested_dict["image_id"] == current_img_id:
+                            # plot GT
+                            for i in range(17):
+                                cv2.circle(img, (int(ann_nested_dict["keypoints"][i * 3]), int(ann_nested_dict["keypoints"][i * 3 + 1])), radius=2, color=(0, 255, 0), thickness=thickness)
+                                font = cv2.FONT_HERSHEY_SIMPLEX
+                                org = (int(ann_nested_dict["keypoints"][i * 3]) + 70, int(ann_nested_dict["keypoints"][i * 3 + 1]))
+                                fontScale = 0.4
+                                # GREE N number for Ground Truth annotation
+                                fontcolor = (0, 255, 0)
+                                # plot number of joints
+                                cv2.putText(img, str(i+1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
+
+                # plot predictions
+                for ann_key, ann_nested_dict in coco_eval.cocoDt.anns.items():
+                    if isinstance(ann_nested_dict, dict):
+                        if ann_nested_dict["image_id"] == current_img_id:
+                            # plot predictions
+                            for i in range(17):
+                                cv2.drawMarker(img, (int(ann_nested_dict["keypoints"][i * 3]), int(ann_nested_dict["keypoints"][i * 3 + 1])), (0, 0, 255), markerType, markerSize, thickness)
+                                font = cv2.FONT_HERSHEY_SIMPLEX
+                                org = (int(ann_nested_dict["keypoints"][i * 3]) + 70, int(ann_nested_dict["keypoints"][i * 3 + 1]))
+                                fontScale = 0.4
+                                # RED number for predictions
+                                fontcolor = (0, 0, 255)
+                                # plot number of joints
+                                cv2.putText(img, str(i+1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
+
+                cv2.imshow("res", img)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+
+        ''' End: Plot for visualizzation for comparision between GT and predicted results '''
 
         return info_str
 
