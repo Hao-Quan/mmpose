@@ -592,6 +592,14 @@ class CocoMetric(BaseMetric):
         res_file = f'{outfile_prefix}.keypoints.json'
         coco_det = self.coco.loadRes(res_file)
         sigmas = self.dataset_meta['sigmas']
+
+        # '''Hao: debug modifiy sigma values for OKS results'''
+        #
+        # for idx_sigma in range(len(sigmas)):
+        #     sigmas[idx_sigma] = 0.3
+        #
+        # '''End: debug modifiy sigma values'''
+
         coco_eval = COCOeval(self.coco, coco_det, self.iou_type, sigmas,
                              self.use_area)
         coco_eval.params.useSegm = None
