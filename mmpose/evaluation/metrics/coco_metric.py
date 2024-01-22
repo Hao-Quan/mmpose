@@ -592,12 +592,16 @@ class CocoMetric(BaseMetric):
         res_file = f'{outfile_prefix}.keypoints.json'
         coco_det = self.coco.loadRes(res_file)
         sigmas = self.dataset_meta['sigmas']
-
+        # original pre-defined sigma values:
+        # sigmas = [0.026 0.025 0.025 0.035 0.035 0.079 0.079 0.072 0.072 0.062 0.062 0.107, 0.107 0.087 0.087 0.089 0.089]
         '''Hao: debug modifiy sigma values for OKS results'''
-
-        # for idx_sigma in range(len(sigmas)):
-        #     sigmas[idx_sigma] = 0.3
+        # new mapped sigmas values (with model T, arrived 0.25 AP)
         sigmas = np.array([0.035, 0.035, 0.079, 0.079, 0.072, 0.072, 0.062, 0.062, 0.107, 0.107, 0.087, 0.087, 0.089, 0.089, 5, 5, 5])
+
+        # esagerato: with model T, arrived 0.49 AP
+        # sigmas = np.array(
+        #     [0.135, 0.135, 0.179, 0.179, 0.172, 0.172, 0.162, 0.162, 0.207, 0.207, 0.187, 0.187, 0.189, 0.189, 5, 5, 5])
+
         '''End: debug modifiy sigma values'''
 
         coco_eval = COCOeval(self.coco, coco_det, self.iou_type, sigmas,
