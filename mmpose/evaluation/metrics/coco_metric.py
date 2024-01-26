@@ -234,6 +234,13 @@ class CocoMetric(BaseMetric):
             # keypoint_scores[0][15] = np.array(1)
             # keypoint_scores[0][16] = np.array(1)
 
+            ''' Hao: handcraf so that COCO predicitons are mapped to Hao's new keypoints structure'''
+            # remove nose (0), left ear (3), right ear (4)
+            keypoints = np.delete(keypoints, [0, 3, 4], axis=1)
+            # add last three points equal to the first three points
+            new_keypoints = np.array([[data_sample['gt_instances']['keypoints'][0][0], data_sample['gt_instances']['keypoints'][0][1], data_sample['gt_instances']['keypoints'][0][2]]])
+            keypoints = np.concatenate((keypoints, new_keypoints), axis=1)
+
 
             pred['keypoints'] = keypoints
             pred['keypoint_scores'] = keypoint_scores
@@ -516,6 +523,35 @@ class CocoMetric(BaseMetric):
         #         pred_item["keypoint_scores"][15] = np.array(1)
         #         pred_item["keypoint_scores"][16] = np.array(1)
 
+
+        # for a_idx, pred_item_list in valid_kpts.items():
+        #     for b_idx, pred_item in enumerate(pred_item_list):
+        #         pred_item['keypoints'] = pred_item['keypoints'][1:]
+        #         pred_item['keypoints'] = np.delete(pred_item['keypoints'], [2, 3], axis=0)
+
+                # keypoints[0][14] = data_sample['gt_instances']['keypoints'][0][0]
+                # keypoints[0][15] = data_sample['gt_instances']['keypoints'][0][1]
+                # keypoints[0][16] = data_sample['gt_instances']['keypoints'][0][2]
+
+
+                # keypoints = keypoints[1:]
+                # keypoints = np.delete(keypoints, [2, 3], axis=0)
+                #
+
+                # new_rows =
+                # keypoints = np.vstack((keypoints, new_rows))
+                #
+                #
+                # keypoints[0][14] = data_sample['gt_instances']['keypoints'][0][0]
+                # keypoints[0][15] = data_sample['gt_instances']['keypoints'][0][1]
+                # keypoints[0][16] = data_sample['gt_instances']['keypoints'][0][2]
+                #
+                # keypoint_scores[0][14] = np.array(1)
+                # keypoint_scores[0][15] = np.array(1)
+                # keypoint_scores[0][16] = np.array(1)
+
+
+
         # convert results to coco style and dump into a json file
         self.results2json(valid_kpts, outfile_prefix=outfile_prefix)
 
@@ -598,9 +634,12 @@ class CocoMetric(BaseMetric):
         # new mapped sigmas values (with model T, arrived 0.25 AP)
         sigmas = np.array([0.035, 0.035, 0.079, 0.079, 0.072, 0.072, 0.062, 0.062, 0.107, 0.107, 0.087, 0.087, 0.089, 0.089, 5, 5, 5])
 
-        # esagerato: with model T, arrived 0.49 AP
+        # esagerato original AP + 0.1 : with model T, arrived 0.49 AP
         # sigmas = np.array(
         #     [0.135, 0.135, 0.179, 0.179, 0.172, 0.172, 0.162, 0.162, 0.207, 0.207, 0.187, 0.187, 0.189, 0.189, 5, 5, 5])
+
+        # esagerato original AP + 0.2 : with model T, arrived 0.69 AP
+        # sigmas = np.array([0.235, 0.235, 0.279, 0.279, 0.272, 0.272, 0.262, 0.262, 0.207, 0.207, 0.287, 0.287, 0.289, 0.289, 5, 5, 5])
 
         '''End: debug modifiy sigma values'''
 
@@ -625,6 +664,8 @@ class CocoMetric(BaseMetric):
         info_str = list(zip(stats_names, coco_eval.stats))
 
         ''' Start: Plot for visualizzation for comparision between GT and predicted results '''
+
+        '''Plot in runtime version'''
         # markerType = cv2.MARKER_DIAMOND
         # markerSize = 15
         # thickness = 2
@@ -664,6 +705,50 @@ class CocoMetric(BaseMetric):
         #         cv2.imshow("res", img)
         #         cv2.waitKey(0)
         #         cv2.destroyAllWindows()
+
+        '''start: save images to folder version'''
+        # markerType = cv2.MARKER_DIAMOND
+        # markerSize = 15
+        # thickness = 2
+        # output_folder = "/media/hao/Seagate Basic2/experiment/mmpose/images"  # Set your output folder path here
+        # for ikey, inested_dict in coco_eval.cocoGt.imgs.items():
+        #     if isinstance(inested_dict, dict):
+        #         img_path = os.path.join("/media/hao/Seagate Basic2/dataset/JRDB_2022/train_dataset_with_activity/images", inested_dict["file_name"])
+        #         img = cv2.imread(img_path)
+        #         current_img_id = inested_dict["id"]
+        #
+        #         if img is None or img.size == 0:
+        #             print(f"Failed to read image from {img_path}")
+        #             continue
+        #
+        #         for ann_key, ann_nested_dict in coco_eval.cocoGt.anns.items():
+        #             if isinstance(ann_nested_dict, dict):
+        #                 if ann_nested_dict["image_id"] == current_img_id:
+        #                     # plot GT
+        #                     for i in range(17):
+        #                         cv2.circle(img, (int(ann_nested_dict["keypoints"][i * 3]), int(ann_nested_dict["keypoints"][i * 3 + 1])), radius=2, color=(0, 255, 0), thickness=thickness)
+        #                         font = cv2.FONT_HERSHEY_SIMPLEX
+        #                         org = (int(ann_nested_dict["keypoints"][i * 3]) + 70, int(ann_nested_dict["keypoints"][i * 3 + 1]))
+        #                         fontScale = 0.4
+        #                         fontcolor = (0, 255, 0)  # GREEN number for Ground Truth annotation
+        #                         cv2.putText(img, str(i+1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
+        #
+        #         for ann_key, ann_nested_dict in coco_eval.cocoDt.anns.items():
+        #             if isinstance(ann_nested_dict, dict):
+        #                 if ann_nested_dict["image_id"] == current_img_id:
+        #                     # plot predictions
+        #                     for i in range(17):
+        #                         cv2.drawMarker(img, (int(ann_nested_dict["keypoints"][i * 3]), int(ann_nested_dict["keypoints"][i * 3 + 1])), (0, 0, 255), markerType, markerSize, thickness)
+        #                         font = cv2.FONT_HERSHEY_SIMPLEX
+        #                         org = (int(ann_nested_dict["keypoints"][i * 3]) + 70, int(ann_nested_dict["keypoints"][i * 3 + 1]))
+        #                         fontScale = 0.4
+        #                         fontcolor = (0, 0, 255)  # RED number for predictions
+        #                         cv2.putText(img, str(i+1), org, font, fontScale, fontcolor, thickness, cv2.LINE_AA)
+        #
+        #         output_file_path = os.path.join(output_folder, f"annotated_{inested_dict['file_name']}")
+        #         os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+        #         cv2.imwrite(output_file_path, img)
+        '''end: save images to folder version'''
 
         ''' End: Plot for visualizzation for comparision between GT and predicted results '''
 
