@@ -224,8 +224,8 @@ val_dataloader = dict(
         # 'COCO_val2017_detections_AP_H_56_person.json',
         # data_prefix=dict(img='val2017/'),
 
-        ann_file='labels/jrdb_mmpose_train/train_adjust_COCO.json',
-        # ann_file='labels/jrdb_mmpose_train/val_adjust_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/train_adjust_COCO.json',
+        ann_file='labels/jrdb_mmpose_train/val_adjust_COCO.json',
 
         data_prefix=dict(img='images'),
         test_mode=True,
@@ -258,8 +258,8 @@ val_evaluator = dict(
     # ann_file= data_root + 'labels/jrdb_mmpose_train/train_individual_COCO.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
 
-    ann_file= data_root + 'labels/jrdb_mmpose_train/train_adjust_COCO.json')
-    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust_COCO.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/train_adjust_COCO.json')
+    ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust_COCO.json')
 
 
 test_evaluator = val_evaluator
