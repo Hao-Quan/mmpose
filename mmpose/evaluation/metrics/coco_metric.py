@@ -234,13 +234,12 @@ class CocoMetric(BaseMetric):
             # keypoint_scores[0][15] = np.array(1)
             # keypoint_scores[0][16] = np.array(1)
 
-            ''' Hao: handcraf so that COCO predicitons are mapped to Hao's new keypoints structure'''
-            # remove nose (0), left ear (3), right ear (4)
+            ''' Hao: handcraft so that COCO predicitons are mapped to Hao's new keypoints structure'''
+            ## remove nose (0), left ear (3), right ear (4)
             keypoints = np.delete(keypoints, [0, 3, 4], axis=1)
-            # add last three points equal to the first three points
+            ## add last three points equal to the first three points
             new_keypoints = np.array([[data_sample['gt_instances']['keypoints'][0][0], data_sample['gt_instances']['keypoints'][0][1], data_sample['gt_instances']['keypoints'][0][2]]])
             keypoints = np.concatenate((keypoints, new_keypoints), axis=1)
-
 
             pred['keypoints'] = keypoints
             pred['keypoint_scores'] = keypoint_scores
@@ -710,7 +709,7 @@ class CocoMetric(BaseMetric):
         # markerType = cv2.MARKER_DIAMOND
         # markerSize = 15
         # thickness = 2
-        # output_folder = "/media/hao/Seagate Basic2/experiment/mmpose/images"  # Set your output folder path here
+        # output_folder = "/media/hao/Seagate Basic2/experiment/mmpose/finetuned_images"  # Set your output folder path here
         # for ikey, inested_dict in coco_eval.cocoGt.imgs.items():
         #     if isinstance(inested_dict, dict):
         #         img_path = os.path.join("/media/hao/Seagate Basic2/dataset/JRDB_2022/train_dataset_with_activity/images", inested_dict["file_name"])
