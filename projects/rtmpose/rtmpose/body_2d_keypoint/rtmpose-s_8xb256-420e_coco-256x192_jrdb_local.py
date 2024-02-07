@@ -11,7 +11,7 @@ base_lr = 4e-3
 train_batch_size = 256
 val_batch_size = 64
 
-train_cfg = dict(max_epochs=max_epochs, val_interval=10)
+train_cfg = dict(max_epochs=max_epochs, val_interval=1)
 randomness = dict(seed=21)
 
 # optimizer
@@ -107,8 +107,8 @@ dataset_type = 'CocoDataset'
 data_mode = 'topdown'
 # data_root = 'data/coco/'
 # data_root = "/media/hao/Seagate Basic1/dataset/coco2017/"
-# data_root = "/media/hao/Seagate Basic2/dataset/JRDB_2022_debug/train_dataset_with_activity/"
 data_root = "/media/hao/Seagate Basic2/dataset/JRDB_2022_debug/train_dataset_with_activity/"
+# data_root = "/media/hao/Seagate Basic2/dataset/JRDB_2022/train_dataset_with_activity/"
 # data_root = "/data/JRDB_2022/train_dataset_with_activity/"
 
 backend_args = dict(backend='local')
@@ -198,7 +198,6 @@ train_dataloader = dict(
         # ann_file='annotations/person_keypoints_train2017.json',
         # ann_file='labels/jrdb_mmpose_train/train_individual_formatted_debug.json',
 
-        # TO BE REMOVED
         ann_file='labels/jrdb_mmpose_train/train_individual_COCO_debug.json',
 
         # data_prefix=dict(img='train2017/'),
@@ -221,8 +220,8 @@ val_dataloader = dict(
         # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug.json',
 
         # OK
+        # ann_file='labels/jrdb_mmpose_train/val_adjust_COCO.json',
         ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug.json',
-        # ann_file='labels/jrdb_mmpose_train/train_individual_COCO_debug.json',
         # ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
 
         # bbox_file=f'{data_root}person_detection_results/'
@@ -260,9 +259,9 @@ val_evaluator = dict(
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_formatted_debug_true_GT.json')
 
     # OK pass debug
-    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust_COCO.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/train_individual_COCO_debug.json')
-    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
+    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug.json')
 
 
 test_evaluator = val_evaluator

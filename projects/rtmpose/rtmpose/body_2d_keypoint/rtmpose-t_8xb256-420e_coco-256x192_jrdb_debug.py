@@ -109,8 +109,7 @@ data_mode = 'topdown'
 # data_root = 'data/coco/'
 # data_root = "/data/JRDB_2022/train_dataset_with_activity/"
 # data_root = "/media/hao/Seagate Basic2/dataset/JRDB_2022/train_dataset_with_activity/"
-# data_root = "/media/hao/Seagate Basic2/dataset/JRDB_2022_debug/train_dataset_with_activity/"
-data_root = "/home/hao/Seagate Basic2/dataset/JRDB_2022_debug/train_dataset_with_activity/"
+data_root = "/media/hao/Seagate Basic2/dataset/JRDB_2022_debug/train_dataset_with_activity/"
 
 
 backend_args = dict(backend='local')

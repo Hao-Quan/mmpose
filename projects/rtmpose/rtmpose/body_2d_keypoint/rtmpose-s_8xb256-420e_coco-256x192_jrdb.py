@@ -8,13 +8,11 @@ input_size = (192, 256)
 max_epochs = 420
 stage2_num_epochs = 30
 base_lr = 4e-3
-# train_batch_size = 256
-# val_batch_size = 64
 
 train_batch_size = 256
 val_batch_size = 64
 
-train_cfg = dict(max_epochs=max_epochs, val_interval=10)
+train_cfg = dict(max_epochs=max_epochs, val_interval=1)
 randomness = dict(seed=21)
 
 # optimizer
@@ -194,7 +192,7 @@ train_pipeline_stage2 = [
 # data loaders
 train_dataloader = dict(
     batch_size=train_batch_size,
-    num_workers=10,
+    num_workers=8,
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=True),
     dataset=dict(
@@ -202,14 +200,15 @@ train_dataloader = dict(
         data_root=data_root,
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_train2017.json',
-        ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
+        ann_file='labels/jrdb_mmpose_train/train_adjust_COCO.json',
         # data_prefix=dict(img='train2017/'),
         data_prefix=dict(img='images'),
         pipeline=train_pipeline,
     ))
 val_dataloader = dict(
     batch_size=val_batch_size,
-    num_workers=10,
+    num_workers=8,
     persistent_workers=True,
     drop_last=False,
     sampler=dict(type='DefaultSampler', shuffle=False, round_up=False),
@@ -218,12 +217,16 @@ val_dataloader = dict(
         data_root=data_root,
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_val2017.json',
-        ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
         # ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
         # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
         # bbox_file=f'{data_root}person_detection_results/'
         # 'COCO_val2017_detections_AP_H_56_person.json',
         # data_prefix=dict(img='val2017/'),
+
+        ann_file='labels/jrdb_mmpose_train/train_adjust_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/val_adjust_COCO.json',
+
         data_prefix=dict(img='images'),
         test_mode=True,
         pipeline=val_pipeline,
@@ -251,9 +254,12 @@ custom_hooks = [
 val_evaluator = dict(
     type='CocoMetric',
     # ann_file=data_root + 'annotations/person_keypoints_val2017.json')
-    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/train_individual_COCO.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
+
+    ann_file= data_root + 'labels/jrdb_mmpose_train/train_adjust_COCO.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust_COCO.json')
 
 
 test_evaluator = val_evaluator
