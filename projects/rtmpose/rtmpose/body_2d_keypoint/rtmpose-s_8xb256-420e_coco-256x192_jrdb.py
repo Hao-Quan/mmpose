@@ -201,7 +201,8 @@ train_dataloader = dict(
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_train2017.json',
         # ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
-        ann_file='labels/jrdb_mmpose_train/train_adjust_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/train_adjust80PercentTrain_COCO.json',
+        ann_file='labels/jrdb_mmpose_train/train_last90PercentTrain_COCO.json',
         # data_prefix=dict(img='train2017/'),
         data_prefix=dict(img='images'),
         pipeline=train_pipeline,
@@ -224,8 +225,12 @@ val_dataloader = dict(
         # 'COCO_val2017_detections_AP_H_56_person.json',
         # data_prefix=dict(img='val2017/'),
 
-        # ann_file='labels/jrdb_mmpose_train/train_adjust_COCO.json',
-        ann_file='labels/jrdb_mmpose_train/val_adjust_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/train_adjust80PercentTrain_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/val_adjust20PercentVAL_COCO.json',
+
+        ann_file='labels/jrdb_mmpose_train/val_first10PercentVAL_COCO.json',
+
+        # ann_file= 'labels/jrdb_mmpose_train/val_adjust_COCO.json',
 
         data_prefix=dict(img='images'),
         test_mode=True,
@@ -258,8 +263,15 @@ val_evaluator = dict(
     # ann_file= data_root + 'labels/jrdb_mmpose_train/train_individual_COCO.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
 
-    # ann_file= data_root + 'labels/jrdb_mmpose_train/train_adjust_COCO.json')
-    ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust_COCO.json')
+    # 20% training exp
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/train_adjust80PercentTrain_COCO.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust20PercentVAL_COCO.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust_COCO.json')
+
+    # 10% training exp
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/train_adjust80PercentTrain_COCO.json')
+    ann_file= data_root + 'labels/jrdb_mmpose_train/val_first10PercentVAL_COCO.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust_COCO.json')
 
 
 test_evaluator = val_evaluator

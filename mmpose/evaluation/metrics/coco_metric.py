@@ -235,7 +235,7 @@ class CocoMetric(BaseMetric):
             # keypoint_scores[0][16] = np.array(1)
 
             '''Hao: (only for fintuning model)  handcraft so that COCO predicitons are mapped to Hao's new keypoints structure'''
-            ## remove nose (0), left ear (3), right ear (4)
+            # ## remove nose (0), left ear (3), right ear (4)
             keypoints = np.delete(keypoints, [0, 3, 4], axis=1)
             ## add last three points equal to the first three points
             new_keypoints = np.array([[data_sample['gt_instances']['keypoints'][0][0], data_sample['gt_instances']['keypoints'][0][1], data_sample['gt_instances']['keypoints'][0][2]]])
