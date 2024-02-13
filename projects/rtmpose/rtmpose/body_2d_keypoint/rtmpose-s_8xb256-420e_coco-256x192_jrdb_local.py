@@ -5,7 +5,7 @@ num_keypoints = 17
 input_size = (192, 256)
 
 # runtime
-max_epochs = 420
+max_epochs = 20
 stage2_num_epochs = 30
 base_lr = 4e-3
 train_batch_size = 256
@@ -22,26 +22,49 @@ optim_wrapper = dict(
     paramwise_cfg=dict(
         norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True))
 
+
 # learning rate
 param_scheduler = [
-    dict(
-        type='LinearLR',
-        start_factor=1.0e-5,
-        by_epoch=False,
-        begin=0,
-        end=1000),
-    dict(
-        type='CosineAnnealingLR',
-        eta_min=base_lr * 0.05,
-        begin=max_epochs // 2,
-        end=max_epochs,
-        T_max=max_epochs // 2,
-        by_epoch=True,
-        convert_to_iter_based=True),
+    # dict(
+    #     type='LinearLR',
+    #     start_factor=1.0e-5,
+    #     by_epoch=False,
+    #     begin=0,
+    #     end=1000),
+    # dict(
+    #     type='CosineAnnealingLR',
+    #     eta_min=base_lr * 0.05,
+    #     begin=max_epochs // 2,
+    #     end=max_epochs,
+    #     T_max=max_epochs // 2,
+    #     by_epoch=True,
+    #     convert_to_iter_based=True),
 ]
 
 # automatically scaling LR based on the actual training batch size
-auto_scale_lr = dict(base_batch_size=1024)
+# auto_scale_lr = dict(base_batch_size=1024)
+auto_scale_lr = dict()
+
+# # learning rate
+# param_scheduler = [
+#     dict(
+#         type='LinearLR',
+#         start_factor=1.0e-5,
+#         by_epoch=False,
+#         begin=0,
+#         end=1000),
+#     dict(
+#         type='CosineAnnealingLR',
+#         eta_min=base_lr * 0.05,
+#         begin=max_epochs // 2,
+#         end=max_epochs,
+#         T_max=max_epochs // 2,
+#         by_epoch=True,
+#         convert_to_iter_based=True),
+# ]
+#
+# # automatically scaling LR based on the actual training batch size
+# auto_scale_lr = dict(base_batch_size=1024)
 
 # codec settings
 codec = dict(

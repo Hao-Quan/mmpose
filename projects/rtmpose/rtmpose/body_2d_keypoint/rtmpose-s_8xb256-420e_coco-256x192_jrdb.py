@@ -23,26 +23,29 @@ optim_wrapper = dict(
     paramwise_cfg=dict(
         norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True))
 
-# learning rate
-param_scheduler = [
-    dict(
-        type='LinearLR',
-        start_factor=1.0e-5,
-        by_epoch=False,
-        begin=0,
-        end=1000),
-    dict(
-        type='CosineAnnealingLR',
-        eta_min=base_lr * 0.05,
-        begin=max_epochs // 2,
-        end=max_epochs,
-        T_max=max_epochs // 2,
-        by_epoch=True,
-        convert_to_iter_based=True),
-]
+param_scheduler = []
+auto_scale_lr = dict()
 
-# automatically scaling LR based on the actual training batch size
-auto_scale_lr = dict(base_batch_size=1024)
+# # ORIGINAL - learning rate
+# param_scheduler = [
+#     dict(
+#         type='LinearLR',
+#         start_factor=1.0e-5,
+#         by_epoch=False,
+#         begin=0,
+#         end=1000),
+#     dict(
+#         type='CosineAnnealingLR',
+#         eta_min=base_lr * 0.05,
+#         begin=max_epochs // 2,
+#         end=max_epochs,
+#         T_max=max_epochs // 2,
+#         by_epoch=True,
+#         convert_to_iter_based=True),
+# ]
+#
+# # automatically scaling LR based on the actual training batch size
+# auto_scale_lr = dict(base_batch_size=1024)
 
 # codec settings
 codec = dict(
@@ -200,9 +203,10 @@ train_dataloader = dict(
         data_root=data_root,
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_train2017.json',
-        # ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
+        ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
         # ann_file='labels/jrdb_mmpose_train/train_adjust80PercentTrain_COCO.json',
-        ann_file='labels/jrdb_mmpose_train/train_last90PercentTrain_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/train_last80PercentTrain_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/train_last90PercentTrain_COCO.json',
         # data_prefix=dict(img='train2017/'),
         data_prefix=dict(img='images'),
         pipeline=train_pipeline,
@@ -218,7 +222,7 @@ val_dataloader = dict(
         data_root=data_root,
         data_mode=data_mode,
         # ann_file='annotations/person_keypoints_val2017.json',
-        # ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
+        ann_file='labels/jrdb_mmpose_train/val_individual_COCO.json',
         # ann_file='labels/jrdb_mmpose_train/train_individual_COCO.json',
         # ann_file='labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json',
         # bbox_file=f'{data_root}person_detection_results/'
@@ -228,7 +232,8 @@ val_dataloader = dict(
         # ann_file='labels/jrdb_mmpose_train/train_adjust80PercentTrain_COCO.json',
         # ann_file='labels/jrdb_mmpose_train/val_adjust20PercentVAL_COCO.json',
 
-        ann_file='labels/jrdb_mmpose_train/val_first10PercentVAL_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/val_first20PercentVAL_COCO.json',
+        # ann_file='labels/jrdb_mmpose_train/val_first10PercentVAL_COCO.json',
 
         # ann_file= 'labels/jrdb_mmpose_train/val_adjust_COCO.json',
 
@@ -259,7 +264,7 @@ custom_hooks = [
 val_evaluator = dict(
     type='CocoMetric',
     # ann_file=data_root + 'annotations/person_keypoints_val2017.json')
-    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
+    ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/train_individual_COCO.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_individual_COCO_debug_true_GT.json')
 
@@ -270,7 +275,8 @@ val_evaluator = dict(
 
     # 10% training exp
     # ann_file= data_root + 'labels/jrdb_mmpose_train/train_adjust80PercentTrain_COCO.json')
-    ann_file= data_root + 'labels/jrdb_mmpose_train/val_first10PercentVAL_COCO.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_first10PercentVAL_COCO.json')
+    # ann_file= data_root + 'labels/jrdb_mmpose_train/val_first20PercentVAL_COCO.json')
     # ann_file= data_root + 'labels/jrdb_mmpose_train/val_adjust_COCO.json')
 
 
